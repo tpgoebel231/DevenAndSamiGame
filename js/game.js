@@ -13,59 +13,66 @@ class MainScene extends Phaser.Scene {
         this.load.image('digSpot', 'assets/digSpot.png');
     }
 
-    create() {
-        this.add.image(400, 300, 'background');
-        
-        this.platforms = this.physics.add.staticGroup();
-        this.platforms.create(400, 568, 'platform').setScale(2).refreshBody();
-        this.platforms.create(600, 400, 'platform');
-        this.platforms.create(50, 250, 'platform');
+create() {
+    this.add.image(400, 300, 'background');
 
-        this.deven = this.physics.add.sprite(100, 450, 'deven');
-        this.deven.setBounce(0.2);
-        this.deven.setCollideWorldBounds(true);
+    this.platforms = this.physics.add.staticGroup();
+    this.platforms.create(400, 568, 'platform').setScale(2).refreshBody();
+    this.platforms.create(600, 400, 'platform');
+    this.platforms.create(50, 250, 'platform');
 
-        this.sami = this.physics.add.sprite(200, 450, 'sami');
-        this.sami.setBounce(0.2);
-        this.sami.setCollideWorldBounds(true);
+    // Start Deven and Sami directly on the ground platform to ensure they can jump immediately
+    this.deven = this.physics.add.sprite(100, 527, 'deven').setScale(2);
+    this.deven.setBounce(0.2);
+    this.deven.setCollideWorldBounds(true);
 
-        this.physics.add.collider(this.deven, this.platforms);
-        this.physics.add.collider(this.sami, this.platforms);
+    this.sami = this.physics.add.sprite(200, 527, 'sami').setScale(2);
+    this.sami.setBounce(0.2);
+    this.sami.setCollideWorldBounds(true);
 
-        this.cursors = this.input.keyboard.createCursorKeys();
-        this.switchKey = this.input.keyboard.addKey('S');
-        this.activePlayer = this.deven;
+    this.physics.add.collider(this.deven, this.platforms);
+    this.physics.add.collider(this.sami, this.platforms);
 
-        this.score = 0;
-        this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+    this.cursors = this.input.keyboard.createCursorKeys();
+    this.switchKey = this.input.keyboard.addKey('S');
+    this.activePlayer = this.deven;
 
-        this.treats = this.physics.add.group({
-            key: 'treat',
-            repeat: 5,
-            setXY: { x: 100, y: 0, stepX: 100 }
-        });
-        this.physics.add.collider(this.treats, this.platforms);
-        this.physics.add.overlap(this.deven, this.treats, this.collectTreat, null, this);
-        this.physics.add.overlap(this.sami, this.treats, this.collectTreat, null, this);
+    this.score = 0;
+    this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
 
-        this.ball = this.physics.add.sprite(300, 500, 'ball');
-        this.ball.setVelocityX(100);
-        this.ball.setBounce(1);
-        this.ball.setCollideWorldBounds(true);
-        this.physics.add.collider(this.ball, this.platforms);
-        this.physics.add.collider(this.deven, this.ball, this.hitBall, null, this);
-        this.physics.add.collider(this.sami, this.ball, this.hitBall, null, this);
+    // Create treats and scale them to make them larger
+    this.treats = this.physics.add.group({
+        key: 'treat',
+        repeat: 5,
+        setXY: { x: 100, y: 0, stepX: 100 }
+    });
+    this.treats.children.iterate(function (child) {
+        child.setScale(2);
+    });
+    this.physics.add.collider(this.treats, this.platforms);
+    this.physics.add.overlap(this.deven, this.treats, this.collectTreat, null, this);
+    this.physics.add.overlap(this.sami, this.treats, this.collectTreat, null, this);
 
-        this.digSpot = this.physics.add.staticSprite(500, 550, 'digSpot');
-        this.physics.add.overlap(this.sami, this.digSpot, this.dig, null, this);
+    // Create the ball directly on the platform and scale it
+    this.ball = this.physics.add.sprite(300, 527, 'ball').setScale(2);
+    this.ball.setVelocityX(100);
+    this.ball.setBounce(1);
+    this.ball.setCollideWorldBounds(true);
+    this.physics.add.collider(this.ball, this.platforms);
+    this.physics.add.collider(this.deven, this.ball, this.hitBall, null, this);
+    this.physics.add.collider(this.sami, this.ball, this.hitBall, null, this);
 
-        this.add.text(400, 30, "Use Arrows to move, Up to jump,\nS to switch, D to dig!\nCollect treats, avoid the ball!", {
-            fontSize: '20px',
-            fill: '#000',
-            align: 'center'
-        }).setOrigin(0.5);
-        
-    }
+    // Create the dig spot and scale it
+    this.digSpot = this.physics.add.staticSprite(500, 550, 'digSpot').setScale(2);
+    this.physics.add.overlap(this.sami, this.digSpot, this.dig, null, this);
+
+    // Add instructions at the top of the screen
+    this.add.text(400, 50, "Use Arrows to move, Up to jump,\nS to switch, D to dig!\nCollect treats, avoid the ball!", {
+        fontSize: '20px',
+        fill: '#000',
+        align: 'center'
+    }).setOrigin(0.5);
+}
 
     update() {
         if (this.switchKey.isDown) {
