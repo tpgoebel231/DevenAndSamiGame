@@ -17,16 +17,18 @@ create() {
     this.add.image(400, 300, 'background');
 
     this.platforms = this.physics.add.staticGroup();
-    this.platforms.create(400, 568, 'platform').setScale(2).refreshBody();
-    this.platforms.create(600, 400, 'platform');
-    this.platforms.create(50, 250, 'platform');
+    this.platforms.create(400, 568, 'platform').setScale(2).refreshBody(); // Ground platform
+    this.platforms.create(600, 400, 'platform'); // Floating platform 1
+    this.platforms.create(50, 250, 'platform');  // Floating platform 2
 
-    // Start Deven and Sami directly on the ground platform to ensure they can jump immediately
-    this.deven = this.physics.add.sprite(100, 527, 'deven').setScale(2);
+    // Create Deven and Sami with scale and adjusted physics body size
+    this.deven = this.physics.add.sprite(100, 511, 'deven').setScale(2);
+    this.deven.body.setSize(this.deven.width, this.deven.height); // Match physics body to scaled size
     this.deven.setBounce(0.2);
     this.deven.setCollideWorldBounds(true);
 
-    this.sami = this.physics.add.sprite(200, 527, 'sami').setScale(2);
+    this.sami = this.physics.add.sprite(200, 511, 'sami').setScale(2);
+    this.sami.body.setSize(this.sami.width, this.sami.height); // Match physics body to scaled size
     this.sami.setBounce(0.2);
     this.sami.setCollideWorldBounds(true);
 
@@ -40,7 +42,7 @@ create() {
     this.score = 0;
     this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
 
-    // Create treats and scale them to make them larger
+    // Create treats with scale and adjusted physics body size
     this.treats = this.physics.add.group({
         key: 'treat',
         repeat: 5,
@@ -48,13 +50,15 @@ create() {
     });
     this.treats.children.iterate(function (child) {
         child.setScale(2);
+        child.body.setSize(child.width, child.height); // Match physics body to scaled size
     });
     this.physics.add.collider(this.treats, this.platforms);
     this.physics.add.overlap(this.deven, this.treats, this.collectTreat, null, this);
     this.physics.add.overlap(this.sami, this.treats, this.collectTreat, null, this);
 
-    // Create the ball directly on the platform and scale it
-    this.ball = this.physics.add.sprite(300, 527, 'ball').setScale(2);
+    // Create the ball with scale and adjusted physics body size
+    this.ball = this.physics.add.sprite(300, 511, 'ball').setScale(2);
+    this.ball.body.setSize(this.ball.width, this.ball.height); // Match physics body to scaled size
     this.ball.setVelocityX(100);
     this.ball.setBounce(1);
     this.ball.setCollideWorldBounds(true);
@@ -62,8 +66,9 @@ create() {
     this.physics.add.collider(this.deven, this.ball, this.hitBall, null, this);
     this.physics.add.collider(this.sami, this.ball, this.hitBall, null, this);
 
-    // Create the dig spot and scale it
+    // Create the dig spot with scale and refresh body
     this.digSpot = this.physics.add.staticSprite(500, 550, 'digSpot').setScale(2);
+    this.digSpot.refreshBody(); // Update physics body for static sprite
     this.physics.add.overlap(this.sami, this.digSpot, this.dig, null, this);
 
     // Add instructions at the top of the screen
