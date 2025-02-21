@@ -59,7 +59,7 @@ class MainScene extends Phaser.Scene {
         this.digSpot = this.physics.add.staticSprite(500, 550, 'digSpot');
         this.physics.add.overlap(this.sami, this.digSpot, this.dig, null, this);
 
-        this.add.text(400, 300, "Use Arrows to move, Up to jump,\nS to switch, D to dig!\nCollect treats, avoid the ball!", {
+        this.add.text(400, 30, "Use Arrows to move, Up to jump,\nS to switch, D to dig!\nCollect treats, avoid the ball!", {
             fontSize: '20px',
             fill: '#000',
             align: 'center'
